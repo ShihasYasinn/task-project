@@ -1,0 +1,74 @@
+{% extends 'dashboard/base.html' %}
+
+{% block title %}Dashboard | Task Admin{% endblock %}
+
+{% block content %}
+<style>
+    .stat-card {
+        background: #fff;
+        border-radius: 5px;
+        padding: 24px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        text-align: center;
+        border: 1px solid #f1f5f7;
+        margin-bottom: 24px;
+        transition: all 0.3s;
+    }
+    .stat-card:hover {
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        transform: translateY(-2px);
+    }
+    .stat-card h3 {
+        font-size: 28px;
+        font-weight: 600;
+        margin-bottom: 5px;
+    }
+    .stat-card p {
+        color: #74788d;
+        font-size: 14px;
+        margin-bottom: 0;
+    }
+    .text-primary-custom { color: #00acc1; }
+    .text-purple-custom { color: #673ab7; }
+    .text-info-custom { color: #2196f3; }
+    .text-danger-custom { color: #f44336; }
+</style>
+
+<div class="row">
+    <div class="col-xl-3 col-md-6">
+        <div class="stat-card">
+            <h3 class="text-primary-custom">0</h3>
+            <p>Stat 1</p>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6">
+        <div class="stat-card">
+            <h3 class="text-purple-custom">0</h3>
+            <p>Stat 2</p>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6">
+        <div class="stat-card">
+            <h3 class="text-info-custom">0</h3>
+            <p>Stat 3</p>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6">
+        <div class="stat-card">
+            <h3 class="text-danger-custom">0</h3>
+            <p>Stat 4</p>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-4 text-center text-muted">
+                <h4>Welcome, {{ user.name|default:'Admin' }}!</h4>
+                <p>This is your superuser dashboard. The graphs have been removed as requested.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

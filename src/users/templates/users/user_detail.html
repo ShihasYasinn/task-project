@@ -1,0 +1,48 @@
+{% extends 'dashboard/base.html' %}
+
+{% block title %}User Details | Task Admin{% endblock %}
+
+{% block content %}
+<div class="mb-4 d-flex justify-content-between align-items-center">
+    <h4 class="m-0">User Details</h4>
+    <div>
+        <a href="{% url 'user-update' user_detail.id %}" class="btn btn-warning text-white"><i class="fa-solid fa-pen"></i> Edit</a>
+        <a href="{% url 'user-list' %}" class="btn btn-light ms-2">Back to List</a>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm" style="max-width: 600px;">
+    <div class="card-body p-4">
+        <table class="table table-borderless mb-0">
+            <tr><th style="width: 150px;" class="text-muted">ID:</th><td class="fw-medium">{{ user_detail.id }}</td></tr>
+            <tr><th class="text-muted">Name:</th><td class="fw-medium">{{ user_detail.name }}</td></tr>
+            <tr><th class="text-muted">Email:</th><td>{{ user_detail.email }}</td></tr>
+            <tr><th class="text-muted">Role:</th><td>
+                {% if user_detail.role == 'admin' %}
+                <span class="badge bg-dark text-white">Admin</span>
+                {% elif user_detail.role == 'supervisor' %}
+                <span class="badge bg-primary text-white">Supervisor</span>
+                {% else %}
+                <span class="badge bg-secondary text-white">Associate</span>
+                {% endif %}
+            </td></tr>
+            <tr><th class="text-muted">Status:</th><td>
+                {% if user_detail.is_active %}
+                <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25">Active</span>
+                {% else %}
+                <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25">Inactive</span>
+                {% endif %}
+            </td></tr>
+            <tr><th class="text-muted">Staff Status:</th><td>
+                {% if user_detail.is_staff %}<span class="badge bg-info text-white">Staff</span>
+                {% else %}<span class="badge bg-light text-dark">Not Staff</span>{% endif %}
+            </td></tr>
+            <tr><th class="text-muted">Superuser:</th><td>
+                {% if user_detail.is_superuser %}<span class="badge bg-dark">Yes</span>
+                {% else %}<span class="badge bg-light text-dark">No</span>{% endif %}
+            </td></tr>
+            <tr><th class="text-muted">Last Login:</th><td>{{ user_detail.last_login|default:"Never logged in" }}</td></tr>
+        </table>
+    </div>
+</div>
+{% endblock %}

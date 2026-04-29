@@ -1,0 +1,24 @@
+{% extends 'dashboard/base.html' %}
+
+{% block title %}Delete User | Task Admin{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <h4 class="m-0">Delete User</h4>
+</div>
+
+<div class="card border-0 shadow-sm border-danger" style="max-width: 500px;">
+    <div class="card-body p-4 text-center">
+        <div class="mb-3 text-danger">
+            <i class="fa-solid fa-triangle-exclamation fa-3x"></i>
+        </div>
+        <h5>Are you sure you want to delete <span class="text-danger">"{{ object.name }}"</span>?</h5>
+        <p class="text-muted">This action cannot be undone.</p>
+        <form method="post" class="mt-4 pt-3 border-top">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger px-4">Yes, Delete User</button>
+            <a href="{% url 'user-list' %}" class="btn btn-light ms-2 px-4">Cancel</a>
+        </form>
+    </div>
+</div>
+{% endblock %}
