@@ -1,0 +1,75 @@
+{% extends 'dashboard/base.html' %}
+
+{% block title %}Department Details | Task Admin{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-xl-8">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div class="d-flex align-items-center">
+                <a href="{% url 'department-list' %}" class="btn btn-sm btn-light border me-3">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </a>
+                <h4 class="mb-0">Department Details</h4>
+            </div>
+            <div>
+                <a href="{% url 'department-update' department.pk %}" class="btn btn-info text-white">
+                    <i class="fa-solid fa-pen-to-square me-1"></i> Edit
+                </a>
+            </div>
+        </div>
+
+        <div class="card border-0 shadow-sm overflow-hidden">
+            <div class="bg-primary p-4 text-white">
+                <div class="d-flex align-items-center">
+                    <div class="bg-white bg-opacity-25 rounded-3 p-3 me-3">
+                        <i class="fa-solid fa-building fa-2x"></i>
+                    </div>
+                    <div>
+                        <h2 class="mb-0 fw-bold">{{ department.dept_name }}</h2>
+                        <span class="badge bg-white bg-opacity-25 text-white">Code: {{ department.dept_code }}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body p-4">
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <label class="text-muted small text-uppercase fw-bold mb-2 d-block">Department Head</label>
+                        {% if department.dept_head %}
+                        <div class="d-flex align-items-center p-3 border rounded-3 bg-light">
+                            <img src="https://ui-avatars.com/api/?name={{ department.dept_head.name }}&background=626ed4&color=fff&size=48" class="rounded-circle me-3" alt="">
+                            <div>
+                                <h6 class="mb-0 fw-bold">{{ department.dept_head.name }}</h6>
+                                <p class="mb-0 text-muted small">{{ department.dept_head.email }}</p>
+                            </div>
+                        </div>
+                        {% else %}
+                        <div class="p-3 border rounded-3 bg-light text-center text-muted italic">
+                            No head assigned
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-3">
+                        <label class="text-muted small text-uppercase fw-bold mb-2 d-block">Created On</label>
+                        <p class="h6 fw-medium">{{ department.created_at|date:"F d, Y" }}</p>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="text-muted small text-uppercase fw-bold mb-2 d-block">Last Updated</label>
+                        <p class="h6 fw-medium">{{ department.updated_at|date:"F d, Y" }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Placeholder for future related data (like members) -->
+        <div class="card border-0 shadow-sm mt-4">
+            <div class="card-header bg-white py-3">
+                <h6 class="mb-0 fw-bold">Department Overview</h6>
+            </div>
+            <div class="card-body p-4 text-center text-muted">
+                <p>Statistics and member list will appear here once tasks and assignments are implemented.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,90 @@
+{% extends 'dashboard/base.html' %}
+
+{% block title %}Departments | Task Admin{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="mb-0">Departments</h4>
+    <a href="{% url 'department-add' %}" class="btn btn-primary">
+        <i class="fa-solid fa-plus me-1"></i> Add Department
+    </a>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="bg-light">
+                    <tr>
+                        <th class="ps-4">Dept Code</th>
+                        <th>Department Name</th>
+                        <th>Department Head</th>
+                        <th>Created At</th>
+                        <th class="text-end pe-4">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for dept in departments %}
+                    <tr>
+                        <td class="ps-4">
+                            <span class="badge bg-soft-info text-info-custom px-2 py-1">{{ dept.dept_code }}</span>
+                        </td>
+                        <td class="fw-medium">{{ dept.dept_name }}</td>
+                        <td>
+                            {% if dept.dept_head %}
+                                <div class="d-flex align-items-center">
+                                    <img src="https://ui-avatars.com/api/?name={{ dept.dept_head.name }}&background=random&size=24" class="rounded-circle me-2" alt="">
+                                    {{ dept.dept_head.name }}
+                                </div>
+                            {% else %}
+                                <span class="text-muted">Not assigned</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-muted">{{ dept.created_at|date:"M d, Y" }}</td>
+                        <td class="text-end pe-4">
+                            <div class="dropdown">
+                                <button class="btn btn-sm btn-link text-muted" type="button" data-bs-toggle="dropdown">
+                                    <i class="fa-solid fa-ellipsis-vertical"></i>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0">
+                                    <li><a class="dropdown-item" href="{% url 'department-detail' dept.pk %}"><i class="fa-solid fa-eye me-2 text-primary"></i> View</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'department-update' dept.pk %}"><i class="fa-solid fa-pen-to-square me-2 text-info"></i> Edit</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item text-danger" href="{% url 'department-delete' dept.pk %}"><i class="fa-solid fa-trash me-2"></i> Delete</a></li>
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center py-5 text-muted">
+                            <i class="fa-solid fa-building-circle-exclamation fa-3x mb-3 d-block opacity-25"></i>
+                            No departments found.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<style>
+    .bg-soft-info { background-color: rgba(33, 150, 243, 0.1); }
+    .text-info-custom { color: #2196f3; }
+    .table thead th {
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 12px;
+        letter-spacing: 0.5px;
+        color: #74788d;
+        padding-top: 15px;
+        padding-bottom: 15px;
+    }
+    .table tbody td {
+        padding-top: 15px;
+        padding-bottom: 15px;
+        color: #495057;
+    }
+</style>
+{% endblock %}

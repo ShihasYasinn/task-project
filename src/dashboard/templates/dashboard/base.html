@@ -201,6 +201,11 @@
                     <i class="fa-solid fa-users"></i> Users
                 </a>
             </li>
+            <li>
+                <a href="{% url 'department-list' %}" class="{% if 'department' in request.resolver_match.url_name %}active{% endif %}">
+                    <i class="fa-solid fa-building"></i> Departments
+                </a>
+            </li>
         </ul>
     </div>
 
