@@ -1,0 +1,63 @@
+{% extends 'dashboard/base.html' %}
+
+{% block title %}Users | Task Admin{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="m-0">Users</h4>
+    <a href="{% url 'user-add' %}" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Add User</a>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-4">ID</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Status</th>
+                        <th class="text-end pe-4">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for u in users %}
+                    <tr>
+                        <td class="ps-4 align-middle">{{ u.id }}</td>
+                        <td class="align-middle fw-semibold">{{ u.name }}</td>
+                        <td class="align-middle">{{ u.email }}</td>
+                        <td class="align-middle">
+                            {% if u.role == 'admin' %}
+                            <span class="badge bg-dark text-white">Admin</span>
+                            {% elif u.role == 'supervisor' %}
+                            <span class="badge bg-primary text-white">Supervisor</span>
+                            {% else %}
+                            <span class="badge bg-secondary text-white">Associate</span>
+                            {% endif %}
+                        </td>
+                        <td class="align-middle">
+                            {% if u.is_active %}
+                            <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25">Active</span>
+                            {% else %}
+                            <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25">Inactive</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-end pe-4 align-middle">
+                            <a href="{% url 'user-detail' u.id %}" class="btn btn-sm btn-info text-white" title="View"><i class="fa-solid fa-eye"></i></a>
+                            <a href="{% url 'user-update' u.id %}" class="btn btn-sm btn-warning text-white" title="Edit"><i class="fa-solid fa-pen"></i></a>
+                            <a href="{% url 'user-delete' u.id %}" class="btn btn-sm btn-danger text-white" title="Delete"><i class="fa-solid fa-trash"></i></a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center py-5 text-muted">No users found. <a href="{% url 'user-add' %}">Add one now</a>.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,59 @@
+{% extends 'dashboard/base.html' %}
+
+{% block title %}{% if object %}Edit User{% else %}Add User{% endif %} | Task Admin{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <h4 class="m-0">{% if object %}Edit User{% else %}Add User{% endif %}</h4>
+</div>
+
+<div class="card border-0 shadow-sm" style="max-width: 600px;">
+    <div class="card-body p-4">
+        <form method="post">
+            {% csrf_token %}
+            {% for field in form %}
+            <div class="mb-3">
+                <label class="form-label fw-medium" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.help_text %}
+                <div class="form-text text-muted" style="font-size: 12px;">{{ field.help_text|safe }}</div>
+                {% endif %}
+                {% if field.errors %}
+                <div class="text-danger mt-1" style="font-size: 13px;">
+                    {% for error in field.errors %}{{ error }}{% endfor %}
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+            <div class="mt-4 pt-2 border-top">
+                <button type="submit" class="btn btn-primary px-4">Save User</button>
+                <a href="{% url 'user-list' %}" class="btn btn-light ms-2 px-4">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+<style>
+    /* Basic styling to make django form look like bootstrap */
+    input[type=text], input[type=email], input[type=password], select {
+        display: block;
+        width: 100%;
+        padding: .45rem .9rem;
+        font-size: .9rem;
+        font-weight: 400;
+        line-height: 1.5;
+        color: #495057;
+        background-color: #fff;
+        background-clip: padding-box;
+        border: 1px solid #ced4da;
+        border-radius: .25rem;
+        transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+    }
+    input[type=text]:focus, input[type=email]:focus, input[type=password]:focus, select:focus {
+        border-color: #626ed4;
+        outline: 0;
+        box-shadow: none;
+    }
+    input[type=checkbox] { margin-right: 8px; transform: scale(1.1); }
+    ul.errorlist { padding-left: 0; list-style: none; color: #dc3545; font-size: 13px; margin-bottom: 5px; }
+</style>
+{% endblock %}
