@@ -1,0 +1,31 @@
+{% extends 'dashboard/base.html' %}
+
+{% block title %}Delete Task | Task Admin{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm mt-5">
+            <div class="card-body p-5 text-center">
+                <div class="text-danger mb-4">
+                    <i class="fa-solid fa-circle-exclamation fa-4x"></i>
+                </div>
+                <h3 class="fw-bold mb-3">Delete Task?</h3>
+                <p class="text-muted mb-4">Are you sure you want to delete task <strong>{{ task.task_code }}</strong>: "{{ task.title }}"? This action cannot be undone.</p>
+                
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-danger py-2">Yes, Delete Task</button>
+                        {% if task.project %}
+                        <a href="{% url 'project-detail' task.project.pk %}" class="btn btn-light py-2">No, Keep Task</a>
+                        {% elif task.service %}
+                        <a href="{% url 'service-detail' task.service.pk %}" class="btn btn-light py-2">No, Keep Task</a>
+                        {% endif %}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

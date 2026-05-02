@@ -1,0 +1,153 @@
+{% extends 'dashboard/base.html' %}
+
+{% block title %}Services | Task Admin{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="mb-0">Services</h4>
+    <a href="{% url 'service-add' %}" class="btn btn-primary px-4">
+        <i class="fa-solid fa-plus me-1"></i> Add Service
+    </a>
+</div>
+
+<form method="get" class="row mb-4 align-items-center">
+    <div class="col-md-3">
+        <div class="input-group">
+            <span class="input-group-text bg-white border-end-0 text-muted"><i class="fa-solid fa-magnifying-glass"></i></span>
+            <input type="text" name="search" class="form-control border-start-0 ps-0" placeholder="Filter Service Name" value="{{ search_query }}">
+        </div>
+    </div>
+    <div class="col-md-2">
+        <select name="status" class="form-select" onchange="this.form.submit()">
+            <option value="" {% if not status_filter %}selected{% endif %}>All Status</option>
+            <option value="active" {% if status_filter == 'active' %}selected{% endif %}>Active</option>
+            <option value="inactive" {% if status_filter == 'inactive' %}selected{% endif %}>Inactive</option>
+        </select>
+    </div>
+    <div class="col-md-7 text-end">
+        <button type="submit" class="btn btn-primary d-none">Search</button>
+        <a href="{% url 'service-list' %}" class="btn btn-light border me-2">Reset</a>
+        <button type="button" class="btn btn-light border"><i class="fa-solid fa-list-check me-1"></i> View</button>
+    </div>
+</form>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="bg-light">
+                    <tr>
+                        <th class="ps-4">Service Code</th>
+                        <th>Service Name</th>
+                        <th>Status</th>
+                        <th>Description</th>
+                        <th>Assignee</th>
+                        <th>Department</th>
+                        <th class="text-end pe-4">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for service in services %}
+                    <tr>
+                        <td class="ps-4">{{ service.service_code|default:"-" }}</td>
+                        <td class="fw-medium">
+                            <div class="d-flex align-items-center">
+                                <div class="bg-primary text-white rounded-2 d-flex align-items-center justify-content-center me-2" style="width: 28px; height: 28px; font-size: 12px; font-weight: bold;">
+                                    {{ service.name|slice:":1"|upper }}
+                                </div>
+                                <a href="{% url 'service-detail' service.pk %}" class="text-decoration-none">{{ service.name }}</a>
+                            </div>
+                        </td>
+                        <td>
+                            {% if service.status == 'active' %}
+                            <span class="badge bg-success text-white px-2">Active</span>
+                            {% else %}
+                            <span class="badge bg-danger text-white px-2">Inactive</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{% url 'service-detail' service.pk %}" class="btn btn-sm btn-light border">View</a>
+                        </td>
+                        <td>
+                            {% if service.assignee %}
+                                <div class="avatar-xs d-flex align-items-center justify-content-center bg-light rounded-circle" style="width: 32px; height: 32px; border: 1px solid #dee2e6;" title="{{ service.assignee.name }}">
+                                    <span class="text-muted small fw-bold">{{ service.assignee.name|slice:":1" }}</span>
+                                </div>
+                            {% else %}
+                                <span class="text-muted">-</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ service.department.dept_name|default:"-" }}</td>
+                        <td class="text-end pe-4">
+                            <div class="dropdown">
+                                <button class="btn btn-sm btn-link text-muted" type="button" data-bs-toggle="dropdown">
+                                    <i class="fa-solid fa-ellipsis-vertical"></i>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0">
+                                    <li><a class="dropdown-item" href="{% url 'service-update' service.pk %}"><i class="fa-solid fa-pen-to-square me-2 text-info"></i> Edit</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item text-danger" href="{% url 'service-delete' service.pk %}"><i class="fa-solid fa-trash me-2"></i> Delete</a></li>
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="text-center py-5 text-muted">
+                            <i class="fa-solid fa-concierge-bell fa-3x mb-3 d-block opacity-25"></i>
+                            No services found.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% if services.has_other_pages %}
+<div class="d-flex justify-content-between align-items-center mt-3">
+    <div class="text-muted small">
+        Showing {{ services.start_index }} to {{ services.end_index }} of {{ services.paginator.count }} services
+    </div>
+    <nav>
+        <ul class="pagination pagination-sm mb-0">
+            {% if services.has_previous %}
+                <li class="page-item"><a class="page-link" href="?page=1{% if search_query %}&search={{ search_query }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}">First</a></li>
+                <li class="page-item"><a class="page-link" href="?page={{ services.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}">Previous</a></li>
+            {% endif %}
+
+            {% for num in services.paginator.page_range %}
+                {% if services.number == num %}
+                    <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                {% elif num > services.number|add:'-3' and num < services.number|add:'3' %}
+                    <li class="page-item"><a class="page-link" href="?page={{ num }}{% if search_query %}&search={{ search_query }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}">{{ num }}</a></li>
+                {% endif %}
+            {% endfor %}
+
+            {% if services.has_next %}
+                <li class="page-item"><a class="page-link" href="?page={{ services.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}">Next</a></li>
+                <li class="page-item"><a class="page-link" href="?page={{ services.paginator.num_pages }}{% if search_query %}&search={{ search_query }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}">Last</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+</div>
+{% endif %}
+
+<style>
+    .table thead th {
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 12px;
+        letter-spacing: 0.5px;
+        color: #74788d;
+        padding-top: 15px;
+        padding-bottom: 15px;
+    }
+    .table tbody td {
+        padding-top: 15px;
+        padding-bottom: 15px;
+        color: #495057;
+    }
+</style>
+{% endblock %}

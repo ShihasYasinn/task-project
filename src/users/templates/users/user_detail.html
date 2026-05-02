@@ -22,6 +22,8 @@
                 <span class="badge bg-dark text-white">Admin</span>
                 {% elif user_detail.role == 'supervisor' %}
                 <span class="badge bg-primary text-white">Supervisor</span>
+                {% elif user_detail.role == 'collaborator' %}
+                <span class="badge bg-info text-white">Collaborator</span>
                 {% else %}
                 <span class="badge bg-secondary text-white">Associate</span>
                 {% endif %}
@@ -32,14 +34,6 @@
                 {% else %}
                 <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25">Inactive</span>
                 {% endif %}
-            </td></tr>
-            <tr><th class="text-muted">Staff Status:</th><td>
-                {% if user_detail.is_staff %}<span class="badge bg-info text-white">Staff</span>
-                {% else %}<span class="badge bg-light text-dark">Not Staff</span>{% endif %}
-            </td></tr>
-            <tr><th class="text-muted">Superuser:</th><td>
-                {% if user_detail.is_superuser %}<span class="badge bg-dark">Yes</span>
-                {% else %}<span class="badge bg-light text-dark">No</span>{% endif %}
             </td></tr>
             <tr><th class="text-muted">Last Login:</th><td>{{ user_detail.last_login|default:"Never logged in" }}</td></tr>
         </table>

@@ -22,6 +22,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         ('admin', 'Admin'),
         ('associate', 'Associate'),
         ('supervisor', 'Supervisor'),
+        ('collaborator', 'Collaborator'),
     )
 
     name = models.CharField(max_length=255)
@@ -38,3 +39,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.email
+
+    def get_absolute_url(self):
+        from django.urls import reverse
+        return reverse('user-detail', kwargs={'pk': self.pk})

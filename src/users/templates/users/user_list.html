@@ -33,6 +33,8 @@
                             <span class="badge bg-dark text-white">Admin</span>
                             {% elif u.role == 'supervisor' %}
                             <span class="badge bg-primary text-white">Supervisor</span>
+                            {% elif u.role == 'collaborator' %}
+                            <span class="badge bg-info text-white">Collaborator</span>
                             {% else %}
                             <span class="badge bg-secondary text-white">Associate</span>
                             {% endif %}
