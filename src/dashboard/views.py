@@ -5,6 +5,7 @@ from departments.models import Department
 from services.models import Service
 from clients.models import Client
 from tasks.models import Task
+from projects.models import Project
 
 @login_required
 def dashboard_view(request):
@@ -12,9 +13,11 @@ def dashboard_view(request):
     
     if user.role in ['admin', 'supervisor']:
         tasks = Task.objects.all()
+        projects = Project.objects.all()
     else:
-        # Associates and others only see their assigned tasks
+        # Associates and others only see their assigned tasks and projects
         tasks = Task.objects.filter(assignee=user)
+        projects = Project.objects.filter(assignee=user)
     
     context = {
         'total_users': User.objects.count(),
@@ -26,6 +29,8 @@ def dashboard_view(request):
         'live_tasks_count': tasks.filter(status__in=['open', 'in-progress']).count(),
         'overdue_tasks_count': tasks.filter(status='overdue').count(),
         'recent_tasks': tasks.order_by('-id')[:10],
+        'assigned_projects': projects.order_by('-id')[:10],
+        'user_department': user.department,
         'is_associate': user.role not in ['admin', 'supervisor'],
     }
     return render(request, 'dashboard/index.html', context)

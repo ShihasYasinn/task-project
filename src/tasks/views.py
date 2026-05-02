@@ -7,8 +7,14 @@ from .forms import TaskForm
 @login_required
 def task_update(request, pk):
     task = get_object_or_404(Task, pk=pk)
+    
+    # Permission check for associates
+    if request.user.role not in ['admin', 'supervisor']:
+        if task.assignee != request.user:
+            messages.error(request, "You do not have permission to edit this task.")
+            return redirect('dashboard')
     if request.method == 'POST':
-        form = TaskForm(request.POST, instance=task)
+        form = TaskForm(request.POST, instance=task, user=request.user)
         if form.is_valid():
             form.save()
             messages.success(request, f'Task "{task.task_code}" updated successfully.')
@@ -18,7 +24,7 @@ def task_update(request, pk):
                 return redirect('service-detail', pk=task.service.pk)
             return redirect('dashboard')
     else:
-        form = TaskForm(instance=task)
+        form = TaskForm(instance=task, user=request.user)
     return render(request, 'tasks/task_form.html', {'form': form, 'task': task})
 
 @login_required

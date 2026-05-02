@@ -11,7 +11,14 @@ from .utils import generate_project_tasks
 
 @login_required
 def project_list(request):
-    projects = Project.objects.all()
+    user = request.user
+    if user.role in ['admin', 'supervisor']:
+        projects = Project.objects.all()
+    else:
+        # Associates only see projects assigned to them OR where they have assigned tasks
+        projects = Project.objects.filter(
+            Q(assignee=user) | Q(tasks__assignee=user)
+        ).distinct()
     
     # Search
     search_query = request.GET.get('search', '')
@@ -43,7 +50,19 @@ def project_list(request):
 @login_required
 def project_detail(request, pk):
     project = get_object_or_404(Project, pk=pk)
+    
+    # Permission check for associates
+    if request.user.role not in ['admin', 'supervisor']:
+        is_involved = project.assignee == request.user or project.tasks.filter(assignee=request.user).exists()
+        if not is_involved:
+            messages.error(request, "You do not have permission to view this project.")
+            return redirect('dashboard')
+
     tasks_list = project.tasks.all()
+    
+    # If associate, only show their assigned tasks
+    if request.user.role not in ['admin', 'supervisor']:
+        tasks_list = tasks_list.filter(assignee=request.user)
     
     # Pagination
     paginator = Paginator(tasks_list, 15)
@@ -51,7 +70,11 @@ def project_detail(request, pk):
     tasks = paginator.get_page(page_number)
     
     if request.method == 'POST':
-        task_form = TaskForm(request.POST)
+        if request.user.role == 'associate':
+            messages.error(request, "You do not have permission to create tasks.")
+            return redirect('project-detail', pk=pk)
+            
+        task_form = TaskForm(request.POST, user=request.user)
         if task_form.is_valid():
             task = task_form.save(commit=False)
             task.project = project
@@ -61,7 +84,7 @@ def project_detail(request, pk):
         else:
             messages.error(request, "Error adding task. Please check the form.")
     else:
-        task_form = TaskForm()
+        task_form = TaskForm(user=request.user)
         
     context = {
         'project': project,
@@ -72,6 +95,9 @@ def project_detail(request, pk):
 
 @login_required
 def project_create(request):
+    if request.user.role == 'associate':
+        messages.error(request, "You do not have permission to create projects.")
+        return redirect('project-list')
     if request.method == 'POST':
         form = ProjectForm(request.POST)
         if form.is_valid():
@@ -85,6 +111,9 @@ def project_create(request):
 
 @login_required
 def project_update(request, pk):
+    if request.user.role == 'associate':
+        messages.error(request, "You do not have permission to update projects.")
+        return redirect('project-list')
     project = get_object_or_404(Project, pk=pk)
     if request.method == 'POST':
         form = ProjectForm(request.POST, instance=project)
@@ -99,6 +128,9 @@ def project_update(request, pk):
 
 @login_required
 def project_delete(request, pk):
+    if request.user.role == 'associate':
+        messages.error(request, "You do not have permission to delete projects.")
+        return redirect('project-list')
     project = get_object_or_404(Project, pk=pk)
     if request.method == 'POST':
         code = project.project_code

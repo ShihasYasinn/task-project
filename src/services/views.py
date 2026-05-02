@@ -10,6 +10,9 @@ from tasks.forms import TaskForm, ServiceTaskForm
 
 @login_required
 def service_list(request):
+    if request.user.role == 'associate':
+        messages.error(request, "You do not have permission to access services.")
+        return redirect('dashboard')
     services = Service.objects.all()
     
     # Get filter parameters
@@ -41,6 +44,9 @@ def service_list(request):
 
 @login_required
 def service_detail(request, pk):
+    if request.user.role == 'associate':
+        messages.error(request, "You do not have permission to access service details.")
+        return redirect('dashboard')
     service = get_object_or_404(Service, pk=pk)
     tasks = service.service_tasks.all()
     
@@ -67,6 +73,9 @@ def service_detail(request, pk):
 
 @login_required
 def service_create(request):
+    if request.user.role == 'associate':
+        messages.error(request, "You do not have permission to create services.")
+        return redirect('dashboard')
     if request.method == 'POST':
         form = ServiceForm(request.POST)
         if form.is_valid():
@@ -81,6 +90,9 @@ def service_create(request):
 
 @login_required
 def service_update(request, pk):
+    if request.user.role == 'associate':
+        messages.error(request, "You do not have permission to update services.")
+        return redirect('dashboard')
     service = get_object_or_404(Service, pk=pk)
     if request.method == 'POST':
         form = ServiceForm(request.POST, instance=service)
@@ -96,6 +108,9 @@ def service_update(request, pk):
 
 @login_required
 def service_delete(request, pk):
+    if request.user.role == 'associate':
+        messages.error(request, "You do not have permission to delete services.")
+        return redirect('dashboard')
     service = get_object_or_404(Service, pk=pk)
     if request.method == 'POST':
         name = service.name
