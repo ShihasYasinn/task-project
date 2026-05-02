@@ -196,6 +196,7 @@
                     <i class="fa-solid fa-desktop"></i> Dashboard
                 </a>
             </li>
+            {% if user.role == 'admin' or user.role == 'supervisor' %}
             <li>
                 <a href="{% url 'user-list' %}" class="{% if 'user' in request.resolver_match.url_name %}active{% endif %}">
                     <i class="fa-solid fa-users"></i> Users
@@ -216,6 +217,7 @@
                     <i class="fa-solid fa-user-tie"></i> Clients
                 </a>
             </li>
+            {% endif %}
             <li>
                 <a href="{% url 'project-list' %}" class="{% if 'project' in request.resolver_match.url_name %}active{% endif %}">
                     <i class="fa-solid fa-folder-tree"></i> Projects

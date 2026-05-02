@@ -23,11 +23,18 @@ class TaskForm(forms.ModelForm):
         }
 
     def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user', None)
         super().__init__(*args, **kwargs)
         self.fields['status'].required = False
         self.fields['priority'].required = False
         self.fields['assigned_days'].required = False
         self.fields['days_before_project_end'].required = False
+        
+        if user and user.role == 'associate':
+            if 'assignee' in self.fields:
+                self.fields['assignee'].disabled = True
+            if 'task_code' in self.fields:
+                self.fields['task_code'].disabled = True
 
 class ServiceTaskForm(forms.ModelForm):
     class Meta:

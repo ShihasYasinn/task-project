@@ -5,16 +5,22 @@ from .forms import CustomUserCreationForm, CustomUserChangeForm
 
 @login_required
 def user_list(request):
+    if request.user.role == 'associate':
+        return redirect('dashboard')
     users = User.objects.all()
     return render(request, 'users/user_list.html', {'users': users})
 
 @login_required
 def user_detail(request, pk):
+    if request.user.role == 'associate':
+        return redirect('dashboard')
     user_detail = get_object_or_404(User, pk=pk)
     return render(request, 'users/user_detail.html', {'user_detail': user_detail})
 
 @login_required
 def user_create(request):
+    if request.user.role == 'associate':
+        return redirect('dashboard')
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
@@ -26,6 +32,8 @@ def user_create(request):
 
 @login_required
 def user_update(request, pk):
+    if request.user.role == 'associate':
+        return redirect('dashboard')
     user = get_object_or_404(User, pk=pk)
     if request.method == 'POST':
         form = CustomUserChangeForm(request.POST, instance=user)
@@ -38,6 +46,8 @@ def user_update(request, pk):
 
 @login_required
 def user_delete(request, pk):
+    if request.user.role == 'associate':
+        return redirect('dashboard')
     user = get_object_or_404(User, pk=pk)
     if request.method == 'POST':
         user.delete()

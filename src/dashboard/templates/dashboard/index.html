@@ -50,135 +50,346 @@
     .bg-soft-primary { background-color: rgba(0, 172, 193, 0.1); color: #00acc1; }
     .bg-soft-danger { background-color: rgba(244, 67, 54, 0.1); color: #f44336; }
     .bg-soft-info { background-color: rgba(33, 150, 243, 0.1); color: #2196f3; }
+    .bg-soft-warning { background-color: rgba(255, 152, 0, 0.1); color: #ff9800; }
     
     .text-success-custom { color: #4caf50; }
     .text-primary-custom { color: #00acc1; }
     .text-danger-custom { color: #f44336; }
     .text-info-custom { color: #2196f3; }
+    .text-warning-custom { color: #ff9800; }
+
+    .dept-card {
+        background: linear-gradient(135deg, #626ed4 0%, #4853b3 100%);
+        color: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 12px rgba(98, 110, 212, 0.2);
+    }
+    .profile-card {
+        background: #fff;
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+        display: flex;
+        align-items: center;
+        gap: 20px;
+    }
+    .badge-soft-success { background-color: rgba(76, 175, 80, 0.1); color: #4caf50; }
+    .badge-soft-secondary { background-color: #f1f3f5; color: #495057; }
 </style>
 
-<div class="row">
-    <!-- Live Tasks -->
-    <div class="col-xl-3 col-md-6">
-        <div class="stat-card">
-            <div>
-                <p>{% if is_associate %}My {% endif %}Live Tasks</p>
-                <h3 class="text-success-custom">{{ live_tasks_count }}</h3>
-            </div>
-            <div class="stat-icon bg-soft-success">
-                <i class="fa-solid fa-play"></i>
-            </div>
-        </div>
-    </div>
-    <!-- Pending Tasks -->
-    <div class="col-xl-3 col-md-6">
-        <div class="stat-card">
-            <div>
-                <p>{% if is_associate %}My {% endif %}Pending Tasks</p>
-                <h3 class="text-primary-custom">{{ pending_tasks_count }}</h3>
-            </div>
-            <div class="stat-icon bg-soft-primary">
-                <i class="fa-solid fa-clock-rotate-left"></i>
-            </div>
-        </div>
-    </div>
-    <!-- Overdue Tasks -->
-    <div class="col-xl-3 col-md-6">
-        <div class="stat-card">
-            <div>
-                <p>{% if is_associate %}My {% endif %}Overdue Tasks</p>
-                <h3 class="text-danger-custom">{{ overdue_tasks_count }}</h3>
-            </div>
-            <div class="stat-icon bg-soft-danger">
-                <i class="fa-solid fa-calendar-xmark"></i>
-            </div>
-        </div>
-    </div>
-    <!-- Total Tasks -->
-    <div class="col-xl-3 col-md-6">
-        <div class="stat-card">
-            <div>
-                <p>{% if is_associate %}My {% endif %}Total Tasks</p>
-                <h3 class="text-info-custom">{{ total_tasks_count }}</h3>
-            </div>
-            <div class="stat-icon bg-soft-info">
-                <i class="fa-solid fa-list-check"></i>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="row mt-2">
-    <div class="col-12">
-        <div class="card border-0 shadow-sm">
-            <div class="card-header bg-white py-3 border-0">
-                <h5 class="mb-0 fw-bold">{% if is_associate %}My Tasks{% else %}Recent Tasks{% endif %}</h5>
-            </div>
-            <div class="card-body p-0">
-                <div class="table-responsive">
-                    <table class="table table-hover align-middle mb-0">
-                        <thead class="bg-light">
-                            <tr>
-                                <th class="ps-4">Code</th>
-                                <th>Title</th>
-                                <th>Project</th>
-                                <th>Priority</th>
-                                <th>Status</th>
-                                <th class="text-end pe-4">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for task in recent_tasks %}
-                            <tr>
-                                <td class="ps-4 small text-muted">{{ task.task_code }}</td>
-                                <td class="fw-medium">{{ task.title }}</td>
-                                <td>
-                                    {% if task.project %}
-                                        <span class="small">{{ task.project.project_code }}</span>
-                                    {% else %}
-                                        <span class="text-muted small">-</span>
-                                    {% endif %}
-                                </td>
-                                <td>
-                                    <span class="badge {% if task.priority == 'high' %}bg-danger{% elif task.priority == 'medium' %}bg-warning{% else %}bg-info{% endif %} text-white px-2" style="font-size: 10px;">
-                                        {{ task.get_priority_display }}
-                                    </span>
-                                </td>
-                                <td>
-                                    <span class="badge {% if task.status == 'completed' %}bg-success{% elif task.status == 'overdue' %}bg-danger{% elif task.status == 'pending' %}bg-warning{% else %}bg-primary{% endif %} text-white px-2" style="font-size: 10px;">
-                                        {{ task.get_status_display }}
-                                    </span>
-                                </td>
-                                <td class="text-end pe-4">
-                                    <a href="{% url 'task-update' task.pk %}" class="btn btn-sm btn-light border">View</a>
-                                </td>
-                            </tr>
-                            {% empty %}
-                            <tr>
-                                <td colspan="6" class="text-center py-5 text-muted">No tasks found.</td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+{% if is_associate %}
+    <!-- ASSOCIATE DASHBOARD -->
+    <div class="row mb-4">
+        <div class="col-lg-6">
+            <div class="profile-card h-100">
+                <img src="https://ui-avatars.com/api/?name={{ user.name }}&background=626ed4&color=fff&size=80" class="rounded-circle" alt="Avatar">
+                <div>
+                    <h4 class="mb-1 fw-bold">{{ user.name }}</h4>
+                    <p class="text-muted mb-1"><i class="fa-solid fa-user-tag me-2"></i>{{ user.get_role_display }}</p>
+                    <p class="text-muted mb-0"><i class="fa-solid fa-envelope me-2"></i>{{ user.email }}</p>
                 </div>
             </div>
-            <div class="card-footer bg-white text-center py-3 border-0">
-                <a href="{% url 'project-list' %}" class="text-decoration-none small">View All Projects to see more tasks</a>
+        </div>
+        <div class="col-lg-6">
+            <div class="dept-card h-100">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <p class="mb-1 opacity-75 small text-uppercase fw-bold">My Department</p>
+                        {% if user_department %}
+                            <h3 class="mb-2 fw-bold">{{ user_department.dept_name }}</h3>
+                            <p class="mb-1"><i class="fa-solid fa-hashtag me-2"></i>{{ user_department.dept_code }}</p>
+                            <p class="mb-0"><i class="fa-solid fa-user-tie me-2"></i>Supervisor: {{ user_department.dept_head.name|default:"Not Assigned" }}</p>
+                        {% else %}
+                            <h3 class="mb-2 fw-bold">No Department</h3>
+                            <p class="mb-0 opacity-75">You are not assigned to a department yet.</p>
+                        {% endif %}
+                    </div>
+                    <div class="fs-1 opacity-25">
+                        <i class="fa-solid fa-building"></i>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
-<div class="row mt-4">
-    <div class="col-12">
-        <div class="card border-0 shadow-sm bg-light">
-            <div class="card-body p-4 text-center text-muted">
-                <h5 class="mb-1">Welcome, {{ user.name }}!</h5>
-                <p class="mb-0 small">{% if is_associate %}Here are your personal task statistics and assignments.{% else %}This is your task management dashboard.{% endif %}</p>
+    <div class="row">
+        <div class="col-xl-3 col-md-6">
+            <div class="stat-card">
+                <div>
+                    <p>Live Tasks</p>
+                    <h3 class="text-success-custom">{{ live_tasks_count }}</h3>
+                </div>
+                <div class="stat-icon bg-soft-success">
+                    <i class="fa-solid fa-play"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="stat-card">
+                <div>
+                    <p>Pending Tasks</p>
+                    <h3 class="text-warning-custom">{{ pending_tasks_count }}</h3>
+                </div>
+                <div class="stat-icon bg-soft-warning">
+                    <i class="fa-solid fa-clock-rotate-left"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="stat-card">
+                <div>
+                    <p>Overdue Tasks</p>
+                    <h3 class="text-danger-custom">{{ overdue_tasks_count }}</h3>
+                </div>
+                <div class="stat-icon bg-soft-danger">
+                    <i class="fa-solid fa-calendar-xmark"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="stat-card">
+                <div>
+                    <p>Total Tasks</p>
+                    <h3 class="text-info-custom">{{ total_tasks_count }}</h3>
+                </div>
+                <div class="stat-icon bg-soft-info">
+                    <i class="fa-solid fa-list-check"></i>
+                </div>
             </div>
         </div>
     </div>
-</div>
+
+    <div class="row">
+        <!-- My Tasks -->
+        <div class="col-xl-8">
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0 fw-bold">My Active Tasks</h5>
+                    <a href="{% url 'project-list' %}" class="btn btn-sm btn-light border">View All</a>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="bg-light">
+                                <tr>
+                                    <th class="ps-4">Code</th>
+                                    <th>Title</th>
+                                    <th>Project</th>
+                                    <th>Status</th>
+                                    <th class="text-end pe-4">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for task in recent_tasks %}
+                                <tr>
+                                    <td class="ps-4 small text-muted">{{ task.task_code }}</td>
+                                    <td class="fw-medium">{{ task.title }}</td>
+                                    <td><span class="small">{{ task.project.project_code|default:"-" }}</span></td>
+                                    <td>
+                                        <span class="badge {% if task.status == 'completed' %}bg-success{% elif task.status == 'overdue' %}bg-danger{% elif task.status == 'pending' %}bg-warning{% else %}bg-primary{% endif %} text-white px-2" style="font-size: 10px;">
+                                            {{ task.get_status_display }}
+                                        </span>
+                                    </td>
+                                    <td class="text-end pe-4">
+                                        <a href="{% url 'task-update' task.pk %}" class="btn btn-sm btn-light border">View</a>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="5" class="text-center py-5 text-muted">No tasks assigned.</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- My Projects -->
+        <div class="col-xl-4">
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0 fw-bold">Assigned Projects</h5>
+                </div>
+                <div class="card-body p-0">
+                    <ul class="list-group list-group-flush">
+                        {% for project in assigned_projects %}
+                        <li class="list-group-item py-3">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <a href="{% url 'project-detail' project.pk %}" class="fw-bold text-decoration-none text-dark">{{ project.project_code }}</a>
+                                <span class="badge {% if project.status == 'open' %}badge-soft-success{% else %}badge-soft-secondary{% endif %}">{{ project.get_status_display }}</span>
+                            </div>
+                            <p class="small text-muted mb-0">{{ project.friendly_name|default:project.service.name }}</p>
+                            <div class="mt-2 small text-muted">
+                                <i class="fa-solid fa-calendar-days me-1"></i> Due: {{ project.end_date }}
+                            </div>
+                        </li>
+                        {% empty %}
+                        <li class="list-group-item py-4 text-center text-muted">No projects assigned.</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% else %}
+    <!-- ADMIN DASHBOARD -->
+    <div class="row">
+        <!-- Global Stats -->
+        <div class="col-xl-3 col-md-6">
+            <div class="stat-card">
+                <div>
+                    <p>Total Users</p>
+                    <h3 class="text-primary-custom">{{ total_users }}</h3>
+                </div>
+                <div class="stat-icon bg-soft-primary">
+                    <i class="fa-solid fa-users"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="stat-card">
+                <div>
+                    <p>Departments</p>
+                    <h3 class="text-info-custom">{{ total_departments }}</h3>
+                </div>
+                <div class="stat-icon bg-soft-info">
+                    <i class="fa-solid fa-building"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="stat-card">
+                <div>
+                    <p>Services</p>
+                    <h3 class="text-success-custom">{{ total_services }}</h3>
+                </div>
+                <div class="stat-icon bg-soft-success">
+                    <i class="fa-solid fa-concierge-bell"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="stat-card">
+                <div>
+                    <p>Total Clients</p>
+                    <h3 class="text-warning-custom">{{ total_clients }}</h3>
+                </div>
+                <div class="stat-icon bg-soft-warning">
+                    <i class="fa-solid fa-user-tie"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Task Stats for Admin -->
+    <div class="row mt-2">
+        <div class="col-xl-3 col-md-6">
+            <div class="stat-card">
+                <div>
+                    <p>Total Tasks</p>
+                    <h3 class="text-primary-custom">{{ total_tasks_count }}</h3>
+                </div>
+                <div class="stat-icon bg-soft-primary">
+                    <i class="fa-solid fa-list-check"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="stat-card">
+                <div>
+                    <p>Live Tasks</p>
+                    <h3 class="text-success-custom">{{ live_tasks_count }}</h3>
+                </div>
+                <div class="stat-icon bg-soft-success">
+                    <i class="fa-solid fa-play"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="stat-card">
+                <div>
+                    <p>Pending Tasks</p>
+                    <h3 class="text-warning-custom">{{ pending_tasks_count }}</h3>
+                </div>
+                <div class="stat-icon bg-soft-warning">
+                    <i class="fa-solid fa-clock-rotate-left"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="stat-card">
+                <div>
+                    <p>Overdue Tasks</p>
+                    <h3 class="text-danger-custom">{{ overdue_tasks_count }}</h3>
+                </div>
+                <div class="stat-icon bg-soft-danger">
+                    <i class="fa-solid fa-calendar-xmark"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-2">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white py-3 border-0 d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0 fw-bold">Recent System Tasks</h5>
+                    <a href="{% url 'project-list' %}" class="btn btn-sm btn-light border">All Projects</a>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="bg-light">
+                                <tr>
+                                    <th class="ps-4">Code</th>
+                                    <th>Title</th>
+                                    <th>Assignee</th>
+                                    <th>Priority</th>
+                                    <th>Status</th>
+                                    <th class="text-end pe-4">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for task in recent_tasks %}
+                                <tr>
+                                    <td class="ps-4 small text-muted">{{ task.task_code }}</td>
+                                    <td class="fw-medium">{{ task.title }}</td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <img src="https://ui-avatars.com/api/?name={{ task.assignee.name|default:'Unassigned' }}&size=24&background=random" class="rounded-circle me-2" alt="">
+                                            <span class="small">{{ task.assignee.name|default:"Unassigned" }}</span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="badge {% if task.priority == 'high' %}bg-danger{% elif task.priority == 'medium' %}bg-warning{% else %}bg-info{% endif %} text-white px-2" style="font-size: 10px;">
+                                            {{ task.get_priority_display }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="badge {% if task.status == 'completed' %}bg-success{% elif task.status == 'overdue' %}bg-danger{% elif task.status == 'pending' %}bg-warning{% else %}bg-primary{% endif %} text-white px-2" style="font-size: 10px;">
+                                            {{ task.get_status_display }}
+                                        </span>
+                                    </td>
+                                    <td class="text-end pe-4">
+                                        <a href="{% url 'task-update' task.pk %}" class="btn btn-sm btn-light border">View</a>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="6" class="text-center py-5 text-muted">No tasks found.</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endif %}
 
 <style>
     .table thead th {
