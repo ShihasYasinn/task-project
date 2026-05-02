@@ -27,17 +27,26 @@
                     </div>
                     <div>
                         <h2 class="mb-0 fw-bold">{{ department.dept_name }}</h2>
-                        <span class="badge bg-white bg-opacity-25 text-white">Code: {{ department.dept_code }}</span>
+                        <div class="mt-2">
+                            <span class="badge bg-white bg-opacity-25 text-white">Code: {{ department.dept_code }}</span>
+                            {% if department.status == 'open' %}
+                            <span class="badge bg-success ms-2">Open</span>
+                            {% else %}
+                            <span class="badge bg-secondary ms-2">Closed</span>
+                            {% endif %}
+                        </div>
                     </div>
                 </div>
             </div>
             <div class="card-body p-4">
                 <div class="row g-4">
                     <div class="col-md-6">
-                        <label class="text-muted small text-uppercase fw-bold mb-2 d-block">Department Head</label>
+                        <label class="text-muted small text-uppercase fw-bold mb-2 d-block">Supervisor</label>
                         {% if department.dept_head %}
                         <div class="d-flex align-items-center p-3 border rounded-3 bg-light">
-                            <img src="https://ui-avatars.com/api/?name={{ department.dept_head.name }}&background=626ed4&color=fff&size=48" class="rounded-circle me-3" alt="">
+                            <div class="avatar-sm me-3 d-flex align-items-center justify-content-center bg-white rounded-circle" style="width: 48px; height: 48px; font-size: 20px; font-weight: bold; color: #626ed4;">
+                                {{ department.dept_head.name|slice:":1" }}
+                            </div>
                             <div>
                                 <h6 class="mb-0 fw-bold">{{ department.dept_head.name }}</h6>
                                 <p class="mb-0 text-muted small">{{ department.dept_head.email }}</p>

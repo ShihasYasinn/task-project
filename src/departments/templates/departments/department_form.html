@@ -18,29 +18,35 @@
                     {% csrf_token %}
                     
                     <div class="mb-3">
-                        <label class="form-label fw-semibold">Department Code</label>
+                        <label class="form-label fw-semibold">Department Code *</label>
                         {{ form.dept_code }}
                         {% if form.dept_code.errors %}
                         <div class="text-danger small mt-1">{{ form.dept_code.errors|first }}</div>
                         {% endif %}
-                        <div class="form-text">Unique identifier for the department.</div>
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label fw-semibold">Department Name</label>
+                        <label class="form-label fw-semibold">Department Name *</label>
                         {{ form.dept_name }}
                         {% if form.dept_name.errors %}
                         <div class="text-danger small mt-1">{{ form.dept_name.errors|first }}</div>
                         {% endif %}
                     </div>
 
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Status *</label>
+                        {{ form.status }}
+                        {% if form.status.errors %}
+                        <div class="text-danger small mt-1">{{ form.status.errors|first }}</div>
+                        {% endif %}
+                    </div>
+
                     <div class="mb-4">
-                        <label class="form-label fw-semibold">Department Head</label>
+                        <label class="form-label fw-semibold">Supervisor *</label>
                         {{ form.dept_head }}
                         {% if form.dept_head.errors %}
                         <div class="text-danger small mt-1">{{ form.dept_head.errors|first }}</div>
                         {% endif %}
-                        <div class="form-text">Assign a user with the 'Supervisor' role.</div>
                     </div>
 
                     <div class="d-grid">

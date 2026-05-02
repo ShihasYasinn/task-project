@@ -1,0 +1,113 @@
+{% extends 'dashboard/base.html' %}
+
+{% block title %}{% if object %}Edit{% else %}Add{% endif %} Client | Task Admin{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10 col-lg-8">
+        <div class="d-flex align-items-center mb-4">
+            <a href="{% url 'client-list' %}" class="btn btn-sm btn-link text-decoration-none me-2">
+                <i class="fa-solid fa-arrow-left"></i>
+            </a>
+            <h4 class="mb-0">{% if object %}Edit{% else %}New{% endif %} Client</h4>
+        </div>
+
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-4">
+                <div class="mb-4">
+                    <h5 class="fw-bold mb-1">Basic Information</h5>
+                    <p class="text-muted small">Enter the basic client details</p>
+                </div>
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <label for="{{ form.client_code.id_for_label }}" class="form-label fw-semibold">Client Code</label>
+                            {{ form.client_code }}
+                            <div class="form-text text-muted">Enter a unique code for client</div>
+                            {% if form.client_code.errors %}
+                                <div class="text-danger small mt-1">{{ form.client_code.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <label for="{{ form.entity_type.id_for_label }}" class="form-label fw-semibold">Entity Type</label>
+                            {{ form.entity_type }}
+                            {% if form.entity_type.errors %}
+                                <div class="text-danger small mt-1">{{ form.entity_type.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <label for="{{ form.name.id_for_label }}" class="form-label fw-semibold">Name</label>
+                            {{ form.name }}
+                            <div class="form-text text-muted">Full legal name of the client</div>
+                            {% if form.name.errors %}
+                                <div class="text-danger small mt-1">{{ form.name.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <label for="{{ form.surname.id_for_label }}" class="form-label fw-semibold">Surname</label>
+                            {{ form.surname }}
+                            <div class="form-text text-muted">Enter the clients legal surname.</div>
+                            {% if form.surname.errors %}
+                                <div class="text-danger small mt-1">{{ form.surname.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <label for="{{ form.friendly_name.id_for_label }}" class="form-label fw-semibold">Friendly Name</label>
+                            {{ form.friendly_name }}
+                            <div class="form-text text-muted">Short name or alias for the client</div>
+                            {% if form.friendly_name.errors %}
+                                <div class="text-danger small mt-1">{{ form.friendly_name.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <label for="{{ form.email.id_for_label }}" class="form-label fw-semibold">Email Address</label>
+                            {{ form.email }}
+                            {% if form.email.errors %}
+                                <div class="text-danger small mt-1">{{ form.email.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <label for="{{ form.phone.id_for_label }}" class="form-label fw-semibold">Phone Number</label>
+                            {{ form.phone }}
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <label for="{{ form.status.id_for_label }}" class="form-label fw-semibold">Status</label>
+                            {{ form.status }}
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="{{ form.address.id_for_label }}" class="form-label fw-semibold">Address</label>
+                        {{ form.address }}
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2 mt-2">
+                        <a href="{% url 'client-list' %}" class="btn btn-light px-4">Cancel</a>
+                        <button type="submit" class="btn btn-primary px-4">
+                            {% if object %}Update{% else %}Next{% endif %}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .form-control:focus {
+        border-color: #626ed4;
+        box-shadow: 0 0 0 0.15rem rgba(98, 110, 212, 0.25);
+    }
+</style>
+{% endblock %}

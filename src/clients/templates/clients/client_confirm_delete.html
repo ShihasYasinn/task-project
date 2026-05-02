@@ -1,0 +1,29 @@
+{% extends 'dashboard/base.html' %}
+
+{% block title %}Delete Client | Task Admin{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6 mt-5">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-5 text-center">
+                <div class="mb-4">
+                    <i class="fa-solid fa-user-minus text-danger fa-4x opacity-50"></i>
+                </div>
+                <h4 class="mb-3">Remove Client?</h4>
+                <p class="text-muted mb-4">
+                    Are you sure you want to delete <strong class="text-dark">{{ client.name }}</strong>? 
+                    This will remove all associated contact information permanently.
+                </p>
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="d-flex justify-content-center gap-2">
+                        <a href="{% url 'client-list' %}" class="btn btn-light px-4">Keep Client</a>
+                        <button type="submit" class="btn btn-danger px-4">Delete Client</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

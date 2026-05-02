@@ -46,43 +46,60 @@
         text-transform: uppercase;
         letter-spacing: 0.5px;
     }
+    .bg-soft-success { background-color: rgba(76, 175, 80, 0.1); color: #4caf50; }
     .bg-soft-primary { background-color: rgba(0, 172, 193, 0.1); color: #00acc1; }
     .bg-soft-danger { background-color: rgba(244, 67, 54, 0.1); color: #f44336; }
     .bg-soft-info { background-color: rgba(33, 150, 243, 0.1); color: #2196f3; }
     
+    .text-success-custom { color: #4caf50; }
     .text-primary-custom { color: #00acc1; }
     .text-danger-custom { color: #f44336; }
     .text-info-custom { color: #2196f3; }
 </style>
 
 <div class="row">
-    <div class="col-xl-4 col-md-4">
+    <!-- Live Tasks -->
+    <div class="col-xl-3 col-md-6">
         <div class="stat-card">
             <div>
-                <p>Pending Tasks</p>
-                <h3 class="text-primary-custom">12</h3>
+                <p>{% if is_associate %}My {% endif %}Live Tasks</p>
+                <h3 class="text-success-custom">{{ live_tasks_count }}</h3>
+            </div>
+            <div class="stat-icon bg-soft-success">
+                <i class="fa-solid fa-play"></i>
+            </div>
+        </div>
+    </div>
+    <!-- Pending Tasks -->
+    <div class="col-xl-3 col-md-6">
+        <div class="stat-card">
+            <div>
+                <p>{% if is_associate %}My {% endif %}Pending Tasks</p>
+                <h3 class="text-primary-custom">{{ pending_tasks_count }}</h3>
             </div>
             <div class="stat-icon bg-soft-primary">
                 <i class="fa-solid fa-clock-rotate-left"></i>
             </div>
         </div>
     </div>
-    <div class="col-xl-4 col-md-4">
+    <!-- Overdue Tasks -->
+    <div class="col-xl-3 col-md-6">
         <div class="stat-card">
             <div>
-                <p>Overdue Tasks</p>
-                <h3 class="text-danger-custom">5</h3>
+                <p>{% if is_associate %}My {% endif %}Overdue Tasks</p>
+                <h3 class="text-danger-custom">{{ overdue_tasks_count }}</h3>
             </div>
             <div class="stat-icon bg-soft-danger">
                 <i class="fa-solid fa-calendar-xmark"></i>
             </div>
         </div>
     </div>
-    <div class="col-xl-4 col-md-4">
+    <!-- Total Tasks -->
+    <div class="col-xl-3 col-md-6">
         <div class="stat-card">
             <div>
-                <p>Total Tasks</p>
-                <h3 class="text-info-custom">48</h3>
+                <p>{% if is_associate %}My {% endif %}Total Tasks</p>
+                <h3 class="text-info-custom">{{ total_tasks_count }}</h3>
             </div>
             <div class="stat-icon bg-soft-info">
                 <i class="fa-solid fa-list-check"></i>
@@ -91,14 +108,86 @@
     </div>
 </div>
 
-<div class="row mt-4">
+<div class="row mt-2">
     <div class="col-12">
         <div class="card border-0 shadow-sm">
-            <div class="card-body p-4 text-center text-muted">
-                <h4>Welcome, {{ user.name|default:'Admin' }}!</h4>
-                <p>This is your superuser dashboard. The graphs have been removed as requested.</p>
+            <div class="card-header bg-white py-3 border-0">
+                <h5 class="mb-0 fw-bold">{% if is_associate %}My Tasks{% else %}Recent Tasks{% endif %}</h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="bg-light">
+                            <tr>
+                                <th class="ps-4">Code</th>
+                                <th>Title</th>
+                                <th>Project</th>
+                                <th>Priority</th>
+                                <th>Status</th>
+                                <th class="text-end pe-4">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for task in recent_tasks %}
+                            <tr>
+                                <td class="ps-4 small text-muted">{{ task.task_code }}</td>
+                                <td class="fw-medium">{{ task.title }}</td>
+                                <td>
+                                    {% if task.project %}
+                                        <span class="small">{{ task.project.project_code }}</span>
+                                    {% else %}
+                                        <span class="text-muted small">-</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <span class="badge {% if task.priority == 'high' %}bg-danger{% elif task.priority == 'medium' %}bg-warning{% else %}bg-info{% endif %} text-white px-2" style="font-size: 10px;">
+                                        {{ task.get_priority_display }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="badge {% if task.status == 'completed' %}bg-success{% elif task.status == 'overdue' %}bg-danger{% elif task.status == 'pending' %}bg-warning{% else %}bg-primary{% endif %} text-white px-2" style="font-size: 10px;">
+                                        {{ task.get_status_display }}
+                                    </span>
+                                </td>
+                                <td class="text-end pe-4">
+                                    <a href="{% url 'task-update' task.pk %}" class="btn btn-sm btn-light border">View</a>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="6" class="text-center py-5 text-muted">No tasks found.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="card-footer bg-white text-center py-3 border-0">
+                <a href="{% url 'project-list' %}" class="text-decoration-none small">View All Projects to see more tasks</a>
             </div>
         </div>
     </div>
 </div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card border-0 shadow-sm bg-light">
+            <div class="card-body p-4 text-center text-muted">
+                <h5 class="mb-1">Welcome, {{ user.name }}!</h5>
+                <p class="mb-0 small">{% if is_associate %}Here are your personal task statistics and assignments.{% else %}This is your task management dashboard.{% endif %}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .table thead th {
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 10px;
+        letter-spacing: 0.5px;
+        color: #74788d;
+        border-top: none;
+    }
+</style>
 {% endblock %}

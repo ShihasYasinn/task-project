@@ -206,6 +206,21 @@
                     <i class="fa-solid fa-building"></i> Departments
                 </a>
             </li>
+            <li>
+                <a href="{% url 'service-list' %}" class="{% if 'service' in request.resolver_match.url_name %}active{% endif %}">
+                    <i class="fa-solid fa-concierge-bell"></i> Services
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'client-list' %}" class="{% if 'client' in request.resolver_match.url_name %}active{% endif %}">
+                    <i class="fa-solid fa-user-tie"></i> Clients
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'project-list' %}" class="{% if 'project' in request.resolver_match.url_name %}active{% endif %}">
+                    <i class="fa-solid fa-folder-tree"></i> Projects
+                </a>
+            </li>
         </ul>
     </div>
 
@@ -231,11 +246,19 @@
     <!-- Main Content -->
     <div class="main-content">
         <div class="page-content">
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
             {% block content %}{% endblock %}
         </div>
     </div>
 
     <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.css"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

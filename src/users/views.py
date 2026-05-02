@@ -1,32 +1,45 @@
-from django.urls import reverse_lazy
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib.auth.decorators import login_required
 from .models import User
 from .forms import CustomUserCreationForm, CustomUserChangeForm
 
-class UserListView(LoginRequiredMixin, ListView):
-    model = User
-    template_name = 'users/user_list.html'
-    context_object_name = 'users'
+@login_required
+def user_list(request):
+    users = User.objects.all()
+    return render(request, 'users/user_list.html', {'users': users})
 
-class UserDetailView(LoginRequiredMixin, DetailView):
-    model = User
-    template_name = 'users/user_detail.html'
-    context_object_name = 'user_detail'
+@login_required
+def user_detail(request, pk):
+    user_detail = get_object_or_404(User, pk=pk)
+    return render(request, 'users/user_detail.html', {'user_detail': user_detail})
 
-class UserCreateView(LoginRequiredMixin, CreateView):
-    model = User
-    form_class = CustomUserCreationForm
-    template_name = 'users/user_form.html'
-    success_url = reverse_lazy('user-list')
+@login_required
+def user_create(request):
+    if request.method == 'POST':
+        form = CustomUserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('user-list')
+    else:
+        form = CustomUserCreationForm()
+    return render(request, 'users/user_form.html', {'form': form})
 
-class UserUpdateView(LoginRequiredMixin, UpdateView):
-    model = User
-    form_class = CustomUserChangeForm
-    template_name = 'users/user_form.html'
-    success_url = reverse_lazy('user-list')
+@login_required
+def user_update(request, pk):
+    user = get_object_or_404(User, pk=pk)
+    if request.method == 'POST':
+        form = CustomUserChangeForm(request.POST, instance=user)
+        if form.is_valid():
+            form.save()
+            return redirect('user-list')
+    else:
+        form = CustomUserChangeForm(instance=user)
+    return render(request, 'users/user_form.html', {'form': form, 'object': user})
 
-class UserDeleteView(LoginRequiredMixin, DeleteView):
-    model = User
-    template_name = 'users/user_confirm_delete.html'
-    success_url = reverse_lazy('user-list')
+@login_required
+def user_delete(request, pk):
+    user = get_object_or_404(User, pk=pk)
+    if request.method == 'POST':
+        user.delete()
+        return redirect('user-list')
+    return render(request, 'users/user_confirm_delete.html', {'user': user})
